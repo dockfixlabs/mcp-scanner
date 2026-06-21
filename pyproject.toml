@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "mcp-scanner"
+version = "0.1.0"
+description = "Security scanner for MCP (Model Context Protocol) servers — detect malicious tools, data exfiltration, and supply chain risks."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Dockfix Labs", email = "security@dockfixlabs.dev"}]
+keywords = ["mcp", "model-context-protocol", "security", "scanner", "ai-agents", "claude", "cursor"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+dependencies = [
+    "click>=8.1",
+    "rich>=13.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov", "ruff"]
+
+[project.scripts]
+mcp-scanner = "mcp_scanner.cli:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
