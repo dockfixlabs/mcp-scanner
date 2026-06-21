@@ -21,7 +21,7 @@ MCP Scanner analyzes:
 ## Quick Start
 
 ```bash
-pip install mcp-scanner
+pip install dfx-mcp-scanner
 
 # Scan your Claude Code MCP config
 mcp-scanner

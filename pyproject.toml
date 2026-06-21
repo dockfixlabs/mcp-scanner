@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
-name = "mcp-scanner"
+name = "dfx-mcp-scanner"
 version = "0.1.0"
 description = "Security scanner for MCP (Model Context Protocol) servers — detect malicious tools, data exfiltration, and supply chain risks."
 readme = "README.md"
