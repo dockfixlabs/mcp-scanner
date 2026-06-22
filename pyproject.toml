@@ -1,13 +1,13 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends._legacy:_Backend"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "dfx-mcp-scanner"
 version = "0.1.0"
 description = "Security scanner for MCP (Model Context Protocol) servers — detect malicious tools, data exfiltration, and supply chain risks."
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.10"
 authors = [{name = "Dockfix Labs", email = "security@dockfixlabs.dev"}]
 keywords = ["mcp", "model-context-protocol", "security", "scanner", "ai-agents", "claude", "cursor"]
