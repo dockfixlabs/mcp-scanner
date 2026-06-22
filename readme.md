@@ -2,8 +2,10 @@
 
 > **Security scanner for MCP (Model Context Protocol) servers.** Detect malicious tools, data exfiltration, and supply chain risks before connecting an MCP server to your AI agent.
 
+[![PyPI](https://img.shields.io/pypi/v/dfx-mcp-scanner?style=flat-square&logo=pypi&logoColor=white&color=2ea043)](https://pypi.org/project/dfx-mcp-scanner/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/dockfixlabs/mcp-scanner/actions)
 
 ---
 
