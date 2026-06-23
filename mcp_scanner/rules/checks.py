@@ -64,7 +64,7 @@ def check_env_secrets(spec_name: str, env: dict, source: str) -> list[Finding]:
     for key, value in env.items():
         if secret_patterns.search(key) and len(str(value)) > 4:
             # Check if it's a placeholder or real value
-            if not re.match(r'^(?:your_|my_|xxx|<|\\$\\{|\\?|placeholder)', str(value), re.I):
+            if not re.match(r'^(?:your_|my_|xxx|<|\$\{|\?|placeholder|example|sample|test|changeme|foo|bar|baz)', str(value), re.I):
                 findings.append(Finding(
                     rule_id="MCP-SECRET-EXPOSURE",
                     rule_name="Secret in MCP config",

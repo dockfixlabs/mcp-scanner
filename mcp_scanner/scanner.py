@@ -25,7 +25,9 @@ def scan_config(config_path: str) -> ScanResult:
         findings.extend(check_unrestricted_access(name, spec.args, config.source_file))
 
     # Also scan referenced source files
-    files_scanned = 1  # the config file
+    files_scanned = 0
+    if config_path and Path(config_path).exists():
+        files_scanned = 1  # the config file
     for name, spec in config.servers.items():
         from mcp_scanner.parser import scan_mcp_source
         source_files = scan_mcp_source(name, spec)

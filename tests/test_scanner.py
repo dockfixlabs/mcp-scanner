@@ -52,7 +52,7 @@ def test_clean_config_no_findings(tmp_path):
             "safe-server": {
                 "command": "python3",
                 "args": ["server.py"],
-                "env": {"API_KEY": "\"}
+                "env": {"API_KEY": "${API_KEY}"}
             }
         }
     }
