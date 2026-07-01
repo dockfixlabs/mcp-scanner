@@ -5,16 +5,23 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dfx-mcp-scanner"
 version = "0.1.1"
-description = "Security scanner for MCP (Model Context Protocol) servers — detect malicious tools, data exfiltration, and supply chain risks."
+description = "Security scanner for MCP (Model Context Protocol) servers. Detect malicious tools, data exfiltration, and supply chain risks."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [{name = "Dockfix Labs", email = "security@dockfixlabs.dev"}]
 keywords = ["mcp", "model-context-protocol", "security", "scanner", "ai-agents", "claude", "cursor"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
 ]
 dependencies = [
     "click>=8.1",
@@ -28,6 +35,15 @@ dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 
 [project.scripts]
 mcp-scanner = "mcp_scanner.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/dockfixlabs/mcp-scanner"
+Documentation = "https://github.com/dockfixlabs/mcp-scanner#readme"
+Issues = "https://github.com/dockfixlabs/mcp-scanner/issues"
+"Security Policy" = "https://github.com/dockfixlabs/mcp-scanner/blob/main/SECURITY.md"
+
+[tool.setuptools.packages.find]
+where = ["."]
 
 [tool.ruff]
 line-length = 100
