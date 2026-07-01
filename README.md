@@ -1,4 +1,4 @@
-﻿# MCP Scanner
+# MCP Scanner
 
 > **Security scanner for MCP (Model Context Protocol) servers.** Detect malicious tools, data exfiltration, and supply chain risks before connecting an MCP server to your AI agent.
 
