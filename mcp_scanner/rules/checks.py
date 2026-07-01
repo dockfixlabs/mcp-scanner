@@ -114,6 +114,106 @@ def check_unrestricted_access(spec_name: str, args: list, source: str) -> list[F
     return findings
 
 
+def check_package_verification(spec_name: str, command: str, args: list, source: str) -> list[Finding]:
+    """Check if MCP server uses unpinned or unverified packages."""
+    findings = []
+    full_cmd = f"{command} {' '.join(args)}"
+
+    # npx without version pin
+    if command in ("npx", "npx.exe"):
+        for arg in args:
+            if arg.startswith("-"):
+                continue
+            # Check if package has version pin
+            if "@" not in arg or arg.startswith("@"):
+                findings.append(Finding(
+                    rule_id="MCP-UNPINNED-PKG",
+                    rule_name="Unpinned package version",
+                    severity=Severity.MEDIUM,
+                    file=source,
+                    snippet=f"{command} {arg}",
+                    description=f"Server '{spec_name}' uses unpinned package: {arg}. Supply chain risk.",
+                    recommendation="Pin exact version (e.g., npx package@1.2.3). Use lockfile for reproducibility.",
+                    confidence=0.7,
+                ))
+                break
+
+    # uvx without version pin
+    if command in ("uvx", "uvx.exe"):
+        for arg in args:
+            if arg.startswith("-"):
+                continue
+            if "@" not in arg:
+                findings.append(Finding(
+                    rule_id="MCP-UNPINNED-PKG",
+                    rule_name="Unpinned package version",
+                    severity=Severity.MEDIUM,
+                    file=source,
+                    snippet=f"{command} {arg}",
+                    description=f"Server '{spec_name}' uses unpinned Python package: {arg}",
+                    recommendation="Pin exact version (e.g., uvx package@1.2.3). Use --from to specify version.",
+                    confidence=0.7,
+                ))
+                break
+
+    # Docker without digest pin
+    if command in ("docker", "docker.exe") and "run" in args:
+        image_arg = None
+        for i, a in enumerate(args):
+            if a == "run":
+                continue
+            if not a.startswith("-") and i > args.index("run"):
+                image_arg = a
+                break
+        if image_arg and "@" not in image_arg and ":" not in image_arg:
+            findings.append(Finding(
+                rule_id="MCP-UNPINNED-IMAGE",
+                rule_name="Unpinned Docker image",
+                severity=Severity.MEDIUM,
+                file=source,
+                snippet=f"docker run {image_arg}",
+                description=f"Server '{spec_name}' uses unpinned Docker image: {image_arg}. Latest tag is mutable.",
+                recommendation="Pin image digest (e.g., image@sha256:...). Avoid :latest tag.",
+                confidence=0.65,
+            ))
+
+    return findings
+
+
+def check_argument_injection(spec_name: str, command: str, args: list, source: str) -> list[Finding]:
+    """Check for argument injection risks in MCP server configuration."""
+    findings = []
+    full_args = " ".join(args)
+
+    # Check for shell metacharacters in args
+    if re.search(r'[;|&$`]', full_args):
+        findings.append(Finding(
+            rule_id="MCP-ARG-INJECTION",
+            rule_name="Shell metacharacters in args",
+            severity=Severity.HIGH,
+            file=source,
+            snippet="***REDACTED***",
+            description=f"Server '{spec_name}' has shell metacharacters in arguments -- injection risk",
+            recommendation="Sanitize all arguments. Avoid shell expansion. Use array-based exec instead of string.",
+            confidence=0.75,
+        ))
+
+    # Check for environment variable expansion that could be exploited
+    if re.search(r'\$\{.*\}', full_args):
+        findings.append(Finding(
+            rule_id="MCP-ENV-EXPANSION",
+            rule_name="Environment variable expansion in args",
+            severity=Severity.LOW,
+            file=source,
+            snippet=full_args[:100],
+            description=f"Server '{spec_name}' uses environment variable expansion in arguments",
+            recommendation="Validate expanded values. Ensure variables cannot be controlled by untrusted input.",
+            confidence=0.4,
+        ))
+
+    return findings
+
+
 def check_tool_count(spec_name: str, tool_count: int, source: str) -> list[Finding]:
     """Check for excessive tool registration."""
     findings = []

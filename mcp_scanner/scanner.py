@@ -10,6 +10,8 @@ from mcp_scanner.rules.checks import (
     check_dangerous_command,
     check_env_secrets,
     check_unrestricted_access,
+    check_package_verification,
+    check_argument_injection,
 )
 
 
@@ -23,6 +25,8 @@ def scan_config(config_path: str) -> ScanResult:
         findings.extend(check_dangerous_command(name, spec.command, spec.args, config.source_file))
         findings.extend(check_env_secrets(name, spec.env, config.source_file))
         findings.extend(check_unrestricted_access(name, spec.args, config.source_file))
+        findings.extend(check_package_verification(name, spec.command, spec.args, config.source_file))
+        findings.extend(check_argument_injection(name, spec.command, spec.args, config.source_file))
 
     # Also scan referenced source files
     files_scanned = 0

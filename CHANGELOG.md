@@ -1,16 +1,24 @@
-﻿# Changelog
+## v0.2.0 - Package Verification + SARIF + CLI Improvements
 
-All notable changes to MCP Scanner will be documented in this file.
+### New Security Checks
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+- **Package verification**: Detects unpinned npm (npx), Python (uvx), and Docker image versions in MCP server configs
+- **Argument injection**: Detects shell metacharacters (;|&$`) and environment variable expansion in MCP server arguments
 
-## [0.1.0] - 2026-06-21
+### CLI Improvements
 
-### Added
-- Config parser for Claude Code, Cursor, and generic MCP configs
-- 7 security checks: RCE, auto-install, privileged exec, secrets, FS access, network, tool count
-- AgentGuard integration for deep source code analysis
-- CLI with text/json output
-- CI/CD ready
-- 6 test cases
+- Added SARIF output format (`--format sarif`) for CI/CD integration
+- Added `--version` flag
+- Added `--no-exit-code` flag for use in pipelines
+- Windows UTF-8 console support (matching AgentGuard)
+
+### Metadata Fixes
+
+- Development Status: Alpha -> Beta
+- Full PyPI classifiers (Python versions, Intended Audience, OS, Topics)
+- Project URLs added (Documentation, Issues, Security Policy)
+- Description: em dash replaced with period
+
+### Check Count
+
+7 -> 9 security checks (added: package verification, argument injection)

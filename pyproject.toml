@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dfx-mcp-scanner"
-version = "0.1.1"
+version = "0.2.0"
 description = "Security scanner for MCP (Model Context Protocol) servers. Detect malicious tools, data exfiltration, and supply chain risks."
 readme = "README.md"
 license = "MIT"

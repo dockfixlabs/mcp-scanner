@@ -9,14 +9,23 @@ from rich.panel import Panel
 from rich.table import Table
 
 from mcp_scanner.scanner import scan_config
+from mcp_scanner import __version__
+
+
+def _make_console() -> Console:
+    """Create a console with UTF-8 support for Windows."""
+    import io
+    console = Console(file=io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace"))
+    return console
 
 
 @click.command()
 @click.argument("config_path", default="~/.claude/claude_code_config.json")
-@click.option("--format", "fmt", type=click.Choice(["text", "json"]), default="text")
+@click.option("--format", "fmt", type=click.Choice(["text", "json", "sarif"]), default="text")
 @click.option("--exit-code/--no-exit-code", default=True)
+@click.version_option(version=__version__, prog_name="mcp-scanner")
 def main(config_path: str, fmt: str, exit_code: bool) -> None:
-    """MCP Scanner — Security scanner for MCP server configurations.
+    """MCP Scanner -- Security scanner for MCP server configurations.
 
     CONFIG_PATH: Path to MCP config file (default: ~/.claude/claude_code_config.json)
 
@@ -24,23 +33,50 @@ def main(config_path: str, fmt: str, exit_code: bool) -> None:
         mcp-scanner                          # Scan default Claude Code config
         mcp-scanner .mcp.json                # Scan project-level MCP config
         mcp-scanner ~/.cursor/mcp.json       # Scan Cursor config
+        mcp-scanner config.json --format json
+        mcp-scanner config.json --format sarif > report.sarif
     """
-    console = Console()
     result = scan_config(config_path)
 
     if fmt == "json":
         print(json.dumps(result.model_dump(), indent=2, default=str))
+    elif fmt == "sarif":
+        sarif = {
+            "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/SARIF/sarif-schema-2.1.0.json",
+            "version": "2.1.0",
+            "runs": [{
+                "tool": {
+                    "driver": {
+                        "name": "MCP Scanner",
+                        "version": __version__,
+                        "informationUri": "https://github.com/dockfixlabs/mcp-scanner",
+                    }
+                },
+                "results": [{
+                    "ruleId": f.rule_id,
+                    "level": {"CRITICAL": "error", "HIGH": "error", "MEDIUM": "warning", "LOW": "note", "INFO": "note"}.get(f.severity.value, "warning"),
+                    "message": {"text": f.description},
+                    "locations": [{
+                        "physicalLocation": {
+                            "artifactLocation": {"uri": f.file},
+                        }
+                    }],
+                } for f in result.findings]
+            }]
+        }
+        print(json.dumps(sarif, indent=2))
     else:
+        console = _make_console()
         console.print()
         console.print(Panel.fit(
-            f"[bold cyan]MCP Scanner[/bold cyan] — MCP Server Security Scan\n"
+            f"[bold cyan]MCP Scanner[/bold cyan] v{__version__} -- MCP Server Security Scan\n"
             f"Config: [white]{result.target}[/white]\n"
             f"Servers found: [white]{result.files_scanned - 1}[/white]",
             border_style="cyan",
         ))
 
         if result.clean:
-            console.print("[bold green]✓ No vulnerabilities found.[/bold green]")
+            console.print("[bold green]No vulnerabilities found.[/bold green]")
         else:
             table = Table(show_header=True, header_style="bold", border_style="dim")
             table.add_column("Severity", width=12)
@@ -62,7 +98,7 @@ def main(config_path: str, fmt: str, exit_code: bool) -> None:
 
             console.print("[bold]Recommendations:[/bold]")
             for f in result.findings:
-                console.print(f"  • {f.rule_name}: {f.recommendation}")
+                console.print(f"  - {f.rule_name}: {f.recommendation}")
 
         console.print()
 
